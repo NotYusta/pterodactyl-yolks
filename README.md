@@ -229,6 +229,16 @@ is tagged correctly.
   * [`MariaDB 12.3 LTS`](/mariadb_lts/12.3)
     * `ghcr.io/notyusta/yolks:mariadb_lts_12.3`
 
+### [MySQL LTS](/mysql_lts)
+
+  * [`MySQL 8.4 LTS`](/mysql_lts/8.4)
+    * `ghcr.io/notyusta/yolks:mysql_lts_8.4`
+  * [`MySQL 9.7 LTS`](/mysql_lts/9.7)
+    * `ghcr.io/notyusta/yolks:mysql_lts_9.7`
+
+> **Note:** the MySQL LTS images are `linux/amd64` only, because Oracle's MySQL
+> APT repository does not publish `arm64` packages.
+
 ### [MongoDB](/mongodb)
 
   * [`MongoDB 5`](/mongodb/5)
