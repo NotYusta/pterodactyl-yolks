@@ -25,7 +25,6 @@ jobs:
           - hytale
           - mohaa
           - rust
-          - samp
           - source
           - valheim
           - thebattleforwesnoth
