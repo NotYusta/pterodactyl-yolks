@@ -34,6 +34,9 @@ is tagged correctly.
   * `ghcr.io/notyusta/yolks:debian`
 * [ubuntu](/oses/ubuntu)
   * `ghcr.io/notyusta/yolks:ubuntu`
+* [ubuntu-wine](/oses/ubuntu-wine)
+  * `ghcr.io/notyusta/yolks:ubuntu-wine`  
+    Ubuntu 24.04 + wine 9 runtime, own build of `hcgcloud/pterodactyl-images:ubuntu-wine`
 
 ### [Apps](/apps)
 
