@@ -57,6 +57,10 @@ RUN         dpkg --add-architecture i386 \
 RUN         wget -q -O /usr/sbin/winetricks https://raw.githubusercontent.com/pelican-eggs/winetricks/master/src/winetricks \
             && chmod +x /usr/sbin/winetricks
 
+## Ubuntu's wine 9 has a single binary; keep the wine64 name working because
+## eggs (e.g. SA-MP-Windows) call it directly
+RUN         ln -sf /usr/bin/wine /usr/bin/wine64
+
 ## Configure locale
 RUN         update-locale lang=en_US.UTF-8 \
             && dpkg-reconfigure --frontend noninteractive locales
