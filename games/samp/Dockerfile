@@ -1,3 +1,31 @@
+# Builds a 32-bit MySQL client library that supports caching_sha2_password.
+# The SA-MP MySQL plugin links against the legacy libmysqlclient.so.18
+# (MySQL 5.5), which predates caching_sha2_password (MySQL 8 default) and
+# fails with "Authentication plugin 'caching_sha2_password' cannot be loaded".
+# MariaDB Connector/C is a drop-in replacement for that soname and, when built
+# with OpenSSL, performs caching_sha2_password RSA full authentication without
+# requiring the application to set MYSQL_OPT_GET_SERVER_PUBLIC_KEY.
+FROM        --platform=linux/386 debian:bookworm-slim AS mysqlclient
+
+RUN         apt update \
+    && apt install -y --no-install-recommends git cmake make gcc libc6-dev libssl-dev ca-certificates \
+    && git clone -q --depth 1 --branch v3.3.21 https://github.com/mariadb-corporation/mariadb-connector-c.git /src \
+    && cmake -S /src -B /src/build \
+        -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_INSTALL_PREFIX=/opt/mysqlclient \
+        -DINSTALL_LIBDIR=lib \
+        -DWITH_SSL=OPENSSL \
+        -DWITH_CURL=OFF \
+        -DWITH_ZSTD=OFF \
+        -DWITH_UNIT_TESTS=OFF \
+        -DCLIENT_PLUGIN_CACHING_SHA2_PASSWORD=STATIC \
+        -DCLIENT_PLUGIN_SHA256_PASSWORD=STATIC \
+        -DCLIENT_PLUGIN_DIALOG=STATIC \
+        -DCLIENT_PLUGIN_MYSQL_CLEAR_PASSWORD=STATIC \
+    && cmake --build /src/build -j"$(nproc)" \
+    && cmake --install /src/build \
+    && rm -rf /src
+
 FROM        --platform=$TARGETOS/$TARGETARCH debian:bookworm-slim
 
 LABEL       author="QuintenQVD" maintainer="josdekurk@gmail.com"
@@ -21,14 +49,16 @@ RUN         if [ "$(uname -m)" = "x86_64" ]; then \
     rm libssl1.1_1.1.0g-2ubuntu4_i386.deb; \
     fi
 
-# Temp fix for legacy 32-bit MySQL plugin (libmysqlclient.so.18)
+# 32-bit MySQL client with caching_sha2_password support, exposed under the
+# legacy libmysqlclient.so.18 soname the SA-MP MySQL plugin was built against
+COPY        --from=mysqlclient /opt/mysqlclient/lib/libmariadb.so.3 /usr/lib/i386-linux-gnu/libmariadb.so.3
 RUN         if [ "$(uname -m)" = "x86_64" ]; then \
-                wget http://security.ubuntu.com/ubuntu/pool/main/m/mysql-5.5/libmysqlclient18_5.5.62-0ubuntu0.14.04.1_i386.deb && \
-                dpkg -x libmysqlclient18_5.5.62-0ubuntu0.14.04.1_i386.deb /tmp/mysql18 && \
-                cp -a /tmp/mysql18/usr/lib/i386-linux-gnu/libmysqlclient.so.18* /usr/lib/i386-linux-gnu/ && \
-                rm -rf /tmp/mysql18 libmysqlclient18_5.5.62-0ubuntu0.14.04.1_i386.deb; \
+                apt update && apt install -y libssl3:i386 && rm -rf /var/lib/apt/lists/* && \
+                ln -sf libmariadb.so.3 /usr/lib/i386-linux-gnu/libmysqlclient.so.18 && \
+                ln -sf libmariadb.so.3 /usr/lib/i386-linux-gnu/libmysqlclient.so && \
+                ldconfig; \
             fi
-        
+
 USER        container
 ENV         USER=container HOME=/home/container
 WORKDIR     /home/container
