@@ -24,6 +24,9 @@ jobs:
           - tag: 21_graalvm
             dir: 21graalvm
             platforms: linux/amd64,linux/arm64
+          - tag: 25_graalvm
+            dir: 25graalvm
+            platforms: linux/amd64,linux/arm64
     steps:
       - uses: actions/checkout@v4
       - uses: docker/setup-qemu-action@v3
