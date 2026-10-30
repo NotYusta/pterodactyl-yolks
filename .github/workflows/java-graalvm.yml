@@ -1,0 +1,45 @@
+name: build java graalvm
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 0 * * 1"
+  push:
+    branches:
+      - main
+    paths:
+      - java/*graalvm/**
+permissions:
+  packages: write
+
+jobs:
+  push:
+    name: "yolks:java_${{ matrix.tag }}"
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          # Remaining versions get added here as their java/<version>graalvm
+          # directories land. Java 8 will be amd64-only (no GraalVM arm64 build).
+          - tag: 21_graalvm
+            dir: 21graalvm
+            platforms: linux/amd64,linux/arm64
+    steps:
+      - uses: actions/checkout@v4
+      - uses: docker/setup-qemu-action@v3
+      - uses: docker/setup-buildx-action@v3
+        with:
+          buildkitd-flags: --debug
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: notyusta
+          password: ${{ secrets.REGISTRY_TOKEN || secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v6
+        with:
+          context: ./java
+          file: ./java/${{ matrix.dir }}/Dockerfile
+          platforms: ${{ matrix.platforms }}
+          push: true
+          tags: |
+            ghcr.io/notyusta/yolks:java_${{ matrix.tag }}
