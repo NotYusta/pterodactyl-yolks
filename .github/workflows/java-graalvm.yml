@@ -19,8 +19,19 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          # Remaining versions get added here as their java/<version>graalvm
-          # directories land. Java 8 will be amd64-only (no GraalVM arm64 build).
+          # GraalVM has no arm64 build for Java 8, so this one is amd64-only.
+          - tag: 8_graalvm
+            dir: 8graalvm
+            platforms: linux/amd64
+          - tag: 11_graalvm
+            dir: 11graalvm
+            platforms: linux/amd64,linux/arm64
+          - tag: 16_graalvm
+            dir: 16graalvm
+            platforms: linux/amd64,linux/arm64
+          - tag: 17_graalvm
+            dir: 17graalvm
+            platforms: linux/amd64,linux/arm64
           - tag: 21_graalvm
             dir: 21graalvm
             platforms: linux/amd64,linux/arm64
