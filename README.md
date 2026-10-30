@@ -198,6 +198,25 @@ is tagged correctly.
 * [`java25`](/java/25)
   * `ghcr.io/notyusta/yolks:java_25`
 
+#### GraalVM
+
+Built here from the official GraalVM Community JDK tarballs (no third-party
+prebuilt images). All variants ship OpenSSL 3 (`libcrypto.so.3`) so native
+plugins such as Geyser's NetherNet/libdatachannel load correctly.
+
+* [`java8-graalvm`](/java/8graalvm)
+  * `ghcr.io/notyusta/yolks:java_8_graalvm` (GraalVM CE 21.2.0, `linux/amd64` only)
+* [`java11-graalvm`](/java/11graalvm)
+  * `ghcr.io/notyusta/yolks:java_11_graalvm` (GraalVM CE 22.3.3)
+* [`java16-graalvm`](/java/16graalvm)
+  * `ghcr.io/notyusta/yolks:java_16_graalvm` (GraalVM CE 21.2.0)
+* [`java17-graalvm`](/java/17graalvm)
+  * `ghcr.io/notyusta/yolks:java_17_graalvm` (GraalVM CE 17.0.9)
+* [`java21-graalvm`](/java/21graalvm)
+  * `ghcr.io/notyusta/yolks:java_21_graalvm` (GraalVM CE 21.0.2)
+* [`java25-graalvm`](/java/25graalvm)
+  * `ghcr.io/notyusta/yolks:java_25_graalvm` (GraalVM CE 25.0.2)
+
 ### [MariaDB](/mariadb)
 
   * [`MariaDB 10.3`](/mariadb/10.3)
