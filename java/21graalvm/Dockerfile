@@ -5,7 +5,7 @@ LABEL       author="Michael Parker" maintainer="parker@pterodactyl.io"
 LABEL       org.opencontainers.image.source="https://github.com/NotYusta/pterodactyl-yolks"
 LABEL       org.opencontainers.image.licenses=MIT
 
-ARG         TARGETARCH=amd64
+ARG         TARGETARCH
 ARG         GRAALVM_VERSION=21.0.2
 
 ENV         JAVA_HOME=/opt/java/openjdk
@@ -41,10 +41,11 @@ RUN         apt-get update \
 ## Install GraalVM Community (JDK $GRAALVM_VERSION) instead of pulling a
 ## third-party prebuilt image, so this image is fully built and owned here.
 RUN         set -eux; \
-            case "$TARGETARCH" in \
+            arch="${TARGETARCH:-$(dpkg --print-architecture)}"; \
+            case "$arch" in \
                 amd64) graal_arch="x64" ;; \
                 arm64) graal_arch="aarch64" ;; \
-                *) echo "unsupported architecture: $TARGETARCH" >&2; exit 1 ;; \
+                *) echo "unsupported architecture: $arch" >&2; exit 1 ;; \
             esac; \
             url="https://github.com/graalvm/graalvm-ce-builds/releases/download/jdk-${GRAALVM_VERSION}/graalvm-community-jdk-${GRAALVM_VERSION}_linux-${graal_arch}_bin.tar.gz"; \
             curl -fsSL -o /tmp/graalvm.tar.gz "$url"; \
